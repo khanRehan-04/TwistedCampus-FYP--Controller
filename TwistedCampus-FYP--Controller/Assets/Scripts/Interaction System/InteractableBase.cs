@@ -29,7 +29,7 @@ public class InteractableBase : MonoBehaviour, IInteractable
     #region Methods
         public void OnInteract()
         {
-
+            Debug.Log("INTERACTED" + gameObject.name);
         }
 
     #endregion

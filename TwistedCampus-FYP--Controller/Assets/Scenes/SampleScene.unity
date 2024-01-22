@@ -575,7 +575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d02a5a90d13a54b458c023639e3014f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  holdDuration: 5
+  holdDuration: 2
   holdInteract: 1
   multipleUse: 0
   isInteractable: 1
@@ -776,7 +776,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c62e9d2ce3da37408a2ee2508b44fe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InteractionInputData: {fileID: 11400000, guid: c75402324ac1f3747b576fac3e07f737, type: 2}
+  interactionInputData: {fileID: 11400000, guid: c75402324ac1f3747b576fac3e07f737, type: 2}
   interactionData: {fileID: 11400000, guid: 104e5f6f05b27b7438f90a56994a4e2c, type: 2}
   rayDistance: 4
   raySphereRadius: 0.3
