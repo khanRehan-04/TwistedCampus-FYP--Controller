@@ -27,11 +27,10 @@ public class InteractableBase : MonoBehaviour, IInteractable
     #endregion
 
     #region Methods
-        public void OnInteract()
-        {
-            Debug.Log("INTERACTED" + gameObject.name);
-        }
-
+    public virtual void OnInteract()
+    {
+        Debug.Log("INTERACTED " + gameObject.name);
+    }
     #endregion
 
 }

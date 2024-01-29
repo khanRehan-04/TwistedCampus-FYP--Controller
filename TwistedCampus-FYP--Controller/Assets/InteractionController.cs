@@ -9,6 +9,9 @@ public class InteractionController : MonoBehaviour
     public InteractionInputData interactionInputData;
     public InteractionData interactionData;
 
+    [Space, Header("UI")]
+    [SerializeField] private InteractioUIPanel uiPanel;
+
     [Space]
     [Header("Ray Settings")]
     public float rayDistance;
@@ -49,18 +52,21 @@ public class InteractionController : MonoBehaviour
                 if (interactionData.IsEmpty())
                 {
                     interactionData.Interactable = _interactable;
+                    uiPanel.SetToolTip("Press & Hold 'E'");
                 }
                 else
                 {
                     if (!interactionData.IsSameInteractable(_interactable))
                     {
                         interactionData.Interactable = _interactable;
+                        uiPanel.SetToolTip("Press & Hold 'E'");
                     }
                 }
             }
         }
         else
         {
+            uiPanel.ResetUI();
             interactionData.ResetData();
         }
 
@@ -81,6 +87,7 @@ public class InteractionController : MonoBehaviour
         {
             m_interacting = false;
             m_holdTimer = 0f;
+            uiPanel.UpdateProgressBar(0f);
         }
 
         if (m_interacting)
@@ -90,9 +97,12 @@ public class InteractionController : MonoBehaviour
 
             if (interactionData.Interactable.HoldInteract)
             {
-                m_holdTimer = Time.deltaTime;
+                m_holdTimer += Time.deltaTime;
 
-                if(m_holdTimer >= interactionData.Interactable.HoldDuration)
+                float heldPercent = m_holdTimer / interactionData.Interactable.HoldDuration;
+                uiPanel.UpdateProgressBar(heldPercent);
+
+                if (heldPercent > 1f)
                 {
                     interactionData.Interact();
                     m_interacting = false;
