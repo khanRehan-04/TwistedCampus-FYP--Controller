@@ -833,16 +833,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canSprint: 1
   canJump: 1
+  canCrouch: 1
   sprintKey: 304
   jumpKey: 32
+  crouchKey: 306
   walkSpeed: 3
   sprintSpeed: 6
+  crouchSpeed: 1.5
   lookSpeedX: 2
   lookSpeedY: 2
   upperlookLimit: 80
   lowerlookLimit: 56
   jumpForce: 8
   gravity: 30
+  crouchHeight: 0.5
+  standingHeight: 2
+  timeToCrouch: 0.25
+  crouchingCenter: {x: 0, y: 0.5, z: 0}
+  standingCenter: {x: 0, y: 0, z: 0}
 --- !u!143 &611352102
 CharacterController:
   m_ObjectHideFlags: 0
@@ -864,7 +872,7 @@ CharacterController:
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 50
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001

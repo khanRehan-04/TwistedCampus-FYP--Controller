@@ -8,18 +8,22 @@ public class FirstPersonController : MonoBehaviour
     public bool CanMove { get; private set; } = true;
     private bool IsSprinting => canSprint && Input.GetKey(sprintKey);
     private bool ShouldJump => Input.GetKeyDown(jumpKey) && characterController.isGrounded;
+    private bool ShouldCrouch => Input.GetKeyDown(crouchKey) && !duringCrouchAnimation && characterController.isGrounded;
 
     [Header("Functional Options")]
     [SerializeField] private bool canSprint = true;
     [SerializeField] private bool canJump = true;
+    [SerializeField] private bool canCrouch = true;
 
     [Header("Controls")]
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
+    [SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
 
     [Header("Movement Parameters")]
     [SerializeField] private float walkSpeed = 5.0f;
     [SerializeField] private float sprintSpeed = 10.0f;
+    [SerializeField] private float crouchSpeed = 0f;
 
     [Header("Mouse Look Parameters")]
     [SerializeField, Range(1, 10)] private float lookSpeedX = 2.0f;
@@ -31,6 +35,15 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float jumpForce = 10.0f;
     [SerializeField] private float gravity = 24.0f;
 
+    [Header("Crouch Parameters")]
+    [SerializeField] private float crouchHeight = 0.5f;
+    [SerializeField] private float standingHeight = 2f;
+    [SerializeField] private float timeToCrouch = 0.25f;
+    [SerializeField] private Vector3 crouchingCenter = new Vector3(0f, 0.5f, 0f);
+    [SerializeField] private Vector3 standingCenter = new Vector3(0f, 0f, 0f);
+    private bool isCrouching;
+    private bool duringCrouchAnimation;
+
     private Camera playerCamera;
     private CharacterController characterController;
 
@@ -39,12 +52,6 @@ public class FirstPersonController : MonoBehaviour
 
     private float rotationX = 0;
 
-    //Animation Components
-    //[SerializeField]private Animator characterAnimator;           
-    //[SerializeField]private string walkAnimationName = "Walking";
-    //[SerializeField]private string idleAnimationName = "Idle";
-
-    //private bool isWalking = false;                                                          
                 
     void Awake()                                                                                                                                                                                     
     {
@@ -65,20 +72,25 @@ public class FirstPersonController : MonoBehaviour
             if(canJump)
                 HandleJump();
 
+            if (canCrouch)
+                HandleCrouch();
+
             ApplyFinalMovements();
 
-            //UpdateAnimations();
         }
     }
 
     private void HandleMovementInput()
     {
-        currentInput = new Vector2((IsSprinting ? sprintSpeed : walkSpeed) * Input.GetAxis("Vertical"), (IsSprinting ? sprintSpeed : walkSpeed) * Input.GetAxis("Horizontal"));
+        float speed = isCrouching ? crouchSpeed : IsSprinting ? sprintSpeed : walkSpeed;
+
+        currentInput = new Vector2(speed * Input.GetAxis("Vertical"), speed * Input.GetAxis("Horizontal"));
 
         float movDirectionY = movDirection.y;
         movDirection = (transform.TransformDirection(Vector3.forward) * currentInput.x) + (transform.TransformDirection(Vector3.right) * currentInput.y);
         movDirection.y = movDirectionY;
     }
+
 
     private void HandleMouseLook()
     {
@@ -97,6 +109,12 @@ public class FirstPersonController : MonoBehaviour
             movDirection.y = jumpForce;
     }
 
+    private void HandleCrouch()
+    {
+        if (ShouldCrouch)
+            StartCoroutine(CrouchStand());
+    }
+
     private void ApplyFinalMovements()
     {
         if (!characterController.isGrounded)
@@ -105,25 +123,30 @@ public class FirstPersonController : MonoBehaviour
         characterController.Move(movDirection * Time.deltaTime);
     }
 
-    //private void UpdateAnimations()
-    //{
-    //    if (currentInput.magnitude > 0)
-    //    {
-    //        // Player is moving, play walk animation
-    //        if (!isWalking)
-    //        {
-    //            characterAnimator.Play(walkAnimationName);
-    //            isWalking = true;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        // Player is not moving, play idle animation
-    //        if (isWalking)
-    //        {
-    //            characterAnimator.Play(idleAnimationName);
-    //            isWalking = false;
-    //        }
-    //    }
-    //}
+    private IEnumerator CrouchStand()
+    {
+        duringCrouchAnimation = true;
+
+        float timeElapsed = 0;
+        float targetHeight = isCrouching ? standingHeight : crouchHeight;
+        float currentHeight = characterController.height;
+        Vector3 targetCenter = isCrouching ? standingCenter : crouchingCenter;
+        Vector3 currentCenter = characterController.center;
+
+        while(timeElapsed < timeToCrouch)
+        {
+            characterController.height = Mathf.Lerp(currentHeight, targetHeight, timeElapsed / timeToCrouch);
+            characterController.center = Vector3.Lerp(currentCenter, standingCenter, timeElapsed / timeToCrouch);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        characterController.height = targetHeight;
+        characterController.center = targetCenter;
+
+        isCrouching = !isCrouching;
+
+        duringCrouchAnimation = false;
+    }
+
 }

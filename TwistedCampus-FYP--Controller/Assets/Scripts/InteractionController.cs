@@ -52,6 +52,7 @@ public class InteractionController : MonoBehaviour
                 if (interactionData.IsEmpty())
                 {
                     interactionData.Interactable = _interactable;
+                                                                                //UI
                     uiPanel.SetToolTip("Press & Hold 'E'");
                 }
                 else
@@ -59,6 +60,7 @@ public class InteractionController : MonoBehaviour
                     if (!interactionData.IsSameInteractable(_interactable))
                     {
                         interactionData.Interactable = _interactable;
+                                                                                //UI
                         uiPanel.SetToolTip("Press & Hold 'E'");
                     }
                 }
@@ -87,6 +89,7 @@ public class InteractionController : MonoBehaviour
         {
             m_interacting = false;
             m_holdTimer = 0f;
+                                                                      //UI
             uiPanel.UpdateProgressBar(0f);
         }
 
@@ -98,7 +101,7 @@ public class InteractionController : MonoBehaviour
             if (interactionData.Interactable.HoldInteract)
             {
                 m_holdTimer += Time.deltaTime;
-
+                                                                     //UI
                 float heldPercent = m_holdTimer / interactionData.Interactable.HoldDuration;
                 uiPanel.UpdateProgressBar(heldPercent);
 
