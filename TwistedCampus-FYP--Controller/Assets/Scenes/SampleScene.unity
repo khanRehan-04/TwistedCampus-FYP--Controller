@@ -837,13 +837,13 @@ MonoBehaviour:
   sprintKey: 304
   jumpKey: 32
   crouchKey: 306
-  walkSpeed: 3
+  walkSpeed: 4
   sprintSpeed: 6
-  crouchSpeed: 1.5
+  crouchSpeed: 2
   lookSpeedX: 2
   lookSpeedY: 2
-  upperlookLimit: 80
-  lowerlookLimit: 56
+  upperlookLimit: 60
+  lowerlookLimit: 63
   jumpForce: 8
   gravity: 30
   crouchHeight: 0.5
