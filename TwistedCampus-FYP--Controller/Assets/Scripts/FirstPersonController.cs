@@ -58,6 +58,7 @@ public class FirstPersonController : MonoBehaviour
 
     private Camera playerCamera;
     private CharacterController characterController;
+    private Animator animator;
 
     private Vector3 movDirection;
     private Vector2 currentInput;
@@ -69,6 +70,7 @@ public class FirstPersonController : MonoBehaviour
     {
         playerCamera = GetComponentInChildren<Camera>();    
         characterController = GetComponent<CharacterController>();
+        animator = GetComponentInChildren<Animator>();
         defaultYPos = playerCamera.transform.localPosition.y;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;        
@@ -101,6 +103,11 @@ public class FirstPersonController : MonoBehaviour
         float speed = isCrouching ? crouchSpeed : IsSprinting ? sprintSpeed : walkSpeed;
 
         currentInput = new Vector2(speed * Input.GetAxis("Vertical"), speed * Input.GetAxis("Horizontal"));
+
+        float moveSpeed = Mathf.Clamp01(new Vector2(currentInput.x, currentInput.y).magnitude);
+
+        // Set the 'Speed' parameter in the Animator
+        animator.SetFloat("Speed", moveSpeed);
 
         float movDirectionY = movDirection.y;
         movDirection = (transform.TransformDirection(Vector3.forward) * currentInput.x) + (transform.TransformDirection(Vector3.right) * currentInput.y);
